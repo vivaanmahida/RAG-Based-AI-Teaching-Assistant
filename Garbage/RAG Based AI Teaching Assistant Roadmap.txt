@@ -1,0 +1,10 @@
+RAG Based AI Teaching Assistant Roadmap
+
+1. Take any 10 yt videos.
+2. Videos to Audios
+3. Audios to Text
+4. Cunking Text
+5. Text to vectors (To Learn)
+6. Query to Vectors (To Learn)
+7. RAG Setup
+8. Get Response from LLM
