@@ -1,0 +1,7 @@
+Hi there! I see you're interested in learning about tables in HTML.
+
+In your Sigma web development course, the topic of tables is covered in Video 5. Specifically, it starts at around 371 seconds and goes up until 373 seconds. During this part of the video, you'll learn how to create a table using the `<table>` tag and understand its various components, such as rows and columns.
+
+Additionally, there's another segment that talks about tables in Video 5, starting from approximately 424 seconds and ending at 425 seconds. This section explains what makes up a table row, so be sure to check it out if you're interested!
+
+If you'd like more information or clarification on any of these topics, feel free to ask!
