@@ -11,17 +11,41 @@ def create_embedding(text_list):
         "model": "bge-m3",
         "input": text_list
     })
-    return r.json()["embeddings"]
 
+    data = r.json()
+
+    # DEBUG PRINT (optional)
+    # print(data)
+
+    if "embedding" in data:
+        return [data["embedding"]]
+    elif "embeddings" in data:
+        return data["embeddings"]
+    else:
+        raise ValueError(f"Unexpected response from Ollama: {data}")
 
 # ---------------- LLM INFERENCE ----------------
 def inference(prompt):
-    r = requests.post("http://localhost:11434/api/generate", json={
-        "model": "llama3.2",
-        "prompt": prompt,
-        "stream": False
-    })
-    return r.json()["response"]
+    r = requests.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "llama3",
+            "prompt": prompt,
+            "stream": False
+        }
+    )
+
+    data = r.json()
+
+    # DEBUG (optional)
+    # print(data)
+
+    if "response" in data:
+        return data["response"]
+    elif "error" in data:
+        raise ValueError(f"Ollama Error: {data['error']}")
+    else:
+        raise ValueError(f"Unexpected response from Ollama: {data}")
 
 
 # ---------------- MAIN QUERY FUNCTION ----------------
@@ -31,8 +55,11 @@ def process_query(incoming_query, top_k=5):
 
     question_embedding = create_embedding([incoming_query])[0]
 
+    # ⚠️ CHANGE THIS LINE IF COLUMN NAME DIFFERENT
+    embedding_column = "embedding"  # change if needed
+
     similarities = cosine_similarity(
-        np.vstack(df["embedding"]),
+        np.vstack(df[embedding_column]),
         [question_embedding]
     ).flatten()
 
@@ -41,22 +68,15 @@ def process_query(incoming_query, top_k=5):
 
     prompt = f"""
 I am teaching web development in my Sigma web development course. 
-Here are video subtitle chunks containing video title, video number, 
-start time in seconds, end time in seconds, the text at that time:
+Here are video subtitle chunks:
 
 {new_df[["title", "number", "start", "end", "text"]].to_json(orient="records")}
-
----------------------------------
 
 User Question:
 "{incoming_query}"
 
-You must:
-- Answer in a human way
-- Mention which video number
-- Mention timestamps
-- Guide the student where to go
-- If unrelated, say you only answer course-related questions
+Answer in a human way.
+Mention video number and timestamp.
 """
 
     response = inference(prompt)
